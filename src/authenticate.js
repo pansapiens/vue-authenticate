@@ -190,7 +190,7 @@ export default class VueAuthenticate {
 
   /**
    * Authenticate user using authentication provider
-   * 
+   *
    * @param  {String} provider       Provider name
    * @param  {Object} userData       User data
    * @param  {Object} requestOptions Request options
@@ -224,6 +224,48 @@ export default class VueAuthenticate {
         } else {
           return reject(new Error('Authentication failed'))
         }
+      }).catch(err => reject(err))
+    })
+  }
+
+  checkAuthentication() {
+    return this.$http.get(
+      joinUrl(this.options.baseUrl, this.options.authCheckUrl),
+      {withCredentials: true});
+  }
+
+  /**
+   * Authenticate user using authentication provider,
+   * for session cookies
+   *
+   * @param  {String} provider       Provider name
+   * @param  {Object} userData       User data
+   * @return {Promise}               Request promise
+   */
+  authenticateSession(provider, userData) {
+    return new Promise((resolve, reject) => {
+      let providerConfig = this.options.providers[provider]
+      if (!providerConfig) {
+        return reject(new Error('Unknown provider'))
+      }
+
+      let providerInstance;
+      switch (providerConfig.oauthType) {
+        case '1.0':
+          providerInstance = new OAuth1(this.$http, this.storage, providerConfig, this.options)
+          break
+        case '2.0':
+          providerInstance = new OAuth2(this.$http, this.storage, providerConfig, this.options)
+          break
+        default:
+          return reject(new Error('Invalid OAuth type'))
+          break
+      }
+
+      return providerInstance.init(userData).then((response) => {
+        let checkAuthResp = this.checkAuthentication()
+      }).then((checkAuthResp, response) => {
+        return resolve(response)
       }).catch(err => reject(err))
     })
   }

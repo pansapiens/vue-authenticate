@@ -30,6 +30,7 @@ export default {
   loginUrl: '/auth/login',
   registerUrl: '/auth/register',
   logoutUrl: null,
+  authCheckUrl: '/auth/check',
   storageType: 'localStorage',
   storageNamespace: 'vue-authenticate',
   cookieStorage: {

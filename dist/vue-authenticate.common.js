@@ -510,6 +510,7 @@ var defaultOptions = {
   loginUrl: '/auth/login',
   registerUrl: '/auth/register',
   logoutUrl: null,
+  authCheckUrl: '/auth/check',
   storageType: 'localStorage',
   storageNamespace: 'vue-authenticate',
   cookieStorage: {
@@ -1356,7 +1357,7 @@ VueAuthenticate.prototype.logout = function logout (requestOptions) {
 
 /**
  * Authenticate user using authentication provider
- * 
+ *
  * @param{String} provider     Provider name
  * @param{Object} userData     User data
  * @param{Object} requestOptions Request options
@@ -1392,6 +1393,50 @@ VueAuthenticate.prototype.authenticate = function authenticate (provider, userDa
       } else {
         return reject(new Error('Authentication failed'))
       }
+    }).catch(function (err) { return reject(err); })
+  })
+};
+
+VueAuthenticate.prototype.checkAuthentication = function checkAuthentication () {
+  return this.$http.get(
+    joinUrl(this.options.baseUrl, this.options.authCheckUrl),
+    {withCredentials: true});
+};
+
+/**
+ * Authenticate user using authentication provider,
+ * for session cookies
+ *
+ * @param{String} provider     Provider name
+ * @param{Object} userData     User data
+ * @return {Promise}             Request promise
+ */
+VueAuthenticate.prototype.authenticateSession = function authenticateSession (provider, userData) {
+    var this$1 = this;
+
+  return new Promise$1(function (resolve, reject) {
+    var providerConfig = this$1.options.providers[provider];
+    if (!providerConfig) {
+      return reject(new Error('Unknown provider'))
+    }
+
+    var providerInstance;
+    switch (providerConfig.oauthType) {
+      case '1.0':
+        providerInstance = new OAuth(this$1.$http, this$1.storage, providerConfig, this$1.options);
+        break
+      case '2.0':
+        providerInstance = new OAuth2(this$1.$http, this$1.storage, providerConfig, this$1.options);
+        break
+      default:
+        return reject(new Error('Invalid OAuth type'))
+        break
+    }
+
+    return providerInstance.init(userData).then(function (response) {
+      var checkAuthResp = this$1.checkAuthentication();
+    }).then(function (checkAuthResp, response) {
+      return resolve(response)
     }).catch(function (err) { return reject(err); })
   })
 };
