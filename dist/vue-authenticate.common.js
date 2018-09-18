@@ -1420,13 +1420,17 @@ VueAuthenticate.prototype.authenticateSession = function authenticateSession (pr
       return reject(new Error('Unknown provider'))
     }
 
+    var oauthReqOptions = objectExtend({}, this$1.options);
+    // this must be true for session cookies to be stored by the browser
+    oauthReqOptions.withCredentials = true;
+
     var providerInstance;
     switch (providerConfig.oauthType) {
       case '1.0':
-        providerInstance = new OAuth(this$1.$http, this$1.storage, providerConfig, this$1.options);
+        providerInstance = new OAuth(this$1.$http, this$1.storage, providerConfig, oauthReqOptions);
         break
       case '2.0':
-        providerInstance = new OAuth2(this$1.$http, this$1.storage, providerConfig, this$1.options);
+        providerInstance = new OAuth2(this$1.$http, this$1.storage, providerConfig, oauthReqOptions);
         break
       default:
         return reject(new Error('Invalid OAuth type'))
@@ -1434,8 +1438,8 @@ VueAuthenticate.prototype.authenticateSession = function authenticateSession (pr
     }
 
     return providerInstance.init(userData).then(function (response) {
-      var checkAuthResp = this$1.checkAuthentication();
-    }).then(function (checkAuthResp, response) {
+      return this$1.checkAuthentication()
+    }).then(function (response) {
       return resolve(response)
     }).catch(function (err) { return reject(err); })
   })
