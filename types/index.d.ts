@@ -16,7 +16,7 @@ export interface AuthenticateOptions {
   authCheckUrl?: string;
   storageType?: string;
   storageNamespace?: string;
-  cookieStorage?: CookieStorageOptions,
+  cookieStorage?: CookieStorageOptions;
   requestDataKey?: string;
   responseDataKey?: string;
   bindRequestInterceptor?: ($auth: VueAuthenticate) => void;
