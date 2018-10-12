@@ -11,7 +11,11 @@
   },
   "typings": "types/index.d.ts",
   "files": [
-    "types/*.d.ts"
+    "types/*.d.ts",
+    "dist/vue-authenticate.js",
+    "dist/vue-authenticate.es2015.js",
+    "dist/vue-authenticate.common.js",
+    "dist/vue-authenticate.min.js"
   ],
   "keywords": [
     "vue",
