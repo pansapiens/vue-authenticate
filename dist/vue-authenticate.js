@@ -1364,17 +1364,18 @@ VueAuthenticate.prototype.logout = function logout (requestOptions) {
  *
  * @param{String} provider     Provider name
  * @param{Object} userData     User data
- * @param{Object} requestOptions Request options
+ * @param {Object} providerOverrides Override specific provider settings
  * @return {Promise}             Request promise
  */
-VueAuthenticate.prototype.authenticate = function authenticate (provider, userData, requestOptions) {
+VueAuthenticate.prototype.authenticate = function authenticate (provider, userData, providerOverrides) {
     var this$1 = this;
 
   return new Promise$1(function (resolve, reject) {
-    var providerConfig = this$1.options.providers[provider];
+    var providerConfig = objectExtend({}, this$1.options.providers[provider]);
     if (!providerConfig) {
       return reject(new Error('Unknown provider'))
     }
+    providerConfig = objectExtend(providerConfig, providerOverrides);
 
     var providerInstance;
     switch (providerConfig.oauthType) {
@@ -1411,18 +1412,20 @@ VueAuthenticate.prototype.checkAuthentication = function checkAuthentication () 
  * Authenticate user using authentication provider,
  * for session cookies
  *
- * @param{String} provider     Provider name
- * @param{Object} userData     User data
- * @return {Promise}             Request promise
+ * @param{String} provider       Provider name
+ * @param{Object} userData       User data
+ * @param {Object} providerOverrides Override specific provider settings
+ * @return {Promise}               Request promise
  */
-VueAuthenticate.prototype.authenticateSession = function authenticateSession (provider, userData) {
+VueAuthenticate.prototype.authenticateSession = function authenticateSession (provider, userData, providerOverrides) {
     var this$1 = this;
 
   return new Promise$1(function (resolve, reject) {
-    var providerConfig = this$1.options.providers[provider];
+    var providerConfig = objectExtend({}, this$1.options.providers[provider]);
     if (!providerConfig) {
       return reject(new Error('Unknown provider'))
     }
+    providerConfig = objectExtend(providerConfig, providerOverrides);
 
     var oauthReqOptions = objectExtend({}, this$1.options);
     // this must be true for session cookies to be stored by the browser

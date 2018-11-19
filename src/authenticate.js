@@ -193,15 +193,16 @@ export default class VueAuthenticate {
    *
    * @param  {String} provider       Provider name
    * @param  {Object} userData       User data
-   * @param  {Object} requestOptions Request options
+   * @param {Object} providerOverrides Override specific provider settings
    * @return {Promise}               Request promise
    */
-  authenticate(provider, userData, requestOptions) {
+  authenticate(provider, userData, providerOverrides) {
     return new Promise((resolve, reject) => {
-      var providerConfig = this.options.providers[provider]
+      let providerConfig = objectExtend({}, this.options.providers[provider])
       if (!providerConfig) {
         return reject(new Error('Unknown provider'))
       }
+      providerConfig = objectExtend(providerConfig, providerOverrides)
 
       let providerInstance;
       switch (providerConfig.oauthType) {
@@ -238,16 +239,18 @@ export default class VueAuthenticate {
    * Authenticate user using authentication provider,
    * for session cookies
    *
-   * @param  {String} provider       Provider name
-   * @param  {Object} userData       User data
-   * @return {Promise}               Request promise
+   * @param  {String} provider         Provider name
+   * @param  {Object} userData         User data
+   * @param {Object} providerOverrides Override specific provider settings
+   * @return {Promise}                 Request promise
    */
-  authenticateSession(provider, userData) {
+  authenticateSession(provider, userData, providerOverrides) {
     return new Promise((resolve, reject) => {
-      let providerConfig = this.options.providers[provider]
+      let providerConfig = objectExtend({}, this.options.providers[provider])
       if (!providerConfig) {
         return reject(new Error('Unknown provider'))
       }
+      providerConfig = objectExtend(providerConfig, providerOverrides)
 
       let oauthReqOptions = objectExtend({}, this.options)
       // this must be true for session cookies to be stored by the browser

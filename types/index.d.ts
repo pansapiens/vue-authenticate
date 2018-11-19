@@ -59,8 +59,7 @@ export interface ProviderOptions {
 
 export declare class VueAuthenticate {
   public constructor($http: AxiosInstance, overrideOptions: AuthenticateOptions);
-  public login(user: object): Promise<AxiosResponse>;
-  public login(user: object, requestOptions: AxiosRequestConfig): Promise<AxiosResponse>;
+  public login(user: object, requestOptions?: AxiosRequestConfig): Promise<AxiosResponse>;
 
   public isAuthenticated(): boolean;
 
@@ -72,7 +71,7 @@ export declare class VueAuthenticate {
 
   public logout(requestOptions?: AxiosRequestConfig): Promise<AxiosResponse>;
 
-  public authenticate(provider: string, userData: any, requestOptions?: AxiosRequestConfig): Promise<{}>;
+  public authenticate(provider: string, userData: any, providerOverrideOptions: any): Promise<{}>;
 
-  public authenticateSession(provider: string, userData: any, requestOptions?: AxiosRequestConfig): Promise<{}>;
+  public authenticateSession(provider: string, userData: any, providerOverrideOptions: any): Promise<{}>;
 }
